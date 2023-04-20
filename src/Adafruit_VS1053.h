@@ -110,8 +110,11 @@ typedef volatile RwReg PortReg;
 
 class Adafruit_VS1053 {
  public:
+#ifndef ESP32 // At least for ESP32 DEVKIT V1 custom pins over this constructor seems to fail. Custom pin by SPIClass instance however, works fine!
   Adafruit_VS1053(int8_t mosi, int8_t miso, int8_t clk, 
 		  int8_t rst, int8_t cs, int8_t dcs, int8_t dreq);
+#endif
+  Adafruit_VS1053(SPIClass* const spi, int8_t rst, int8_t cs, int8_t dcs, int8_t dreq);
   Adafruit_VS1053(int8_t rst, int8_t cs, int8_t dcs, int8_t dreq);
   uint8_t begin(void);
   void reset(void);
@@ -158,14 +161,20 @@ private:
  private:
   int8_t _mosi, _miso, _clk, _reset, _cs, _dcs;
   boolean useHardwareSPI;
+  SPIClass* const _spi;
 #endif
 };
 
 
 class Adafruit_VS1053_FilePlayer : public Adafruit_VS1053 {
  public:
+ 
+#ifndef ESP32
   Adafruit_VS1053_FilePlayer (int8_t mosi, int8_t miso, int8_t clk, 
 			      int8_t rst, int8_t cs, int8_t dcs, int8_t dreq,
+			      int8_t cardCS);
+#endif
+  Adafruit_VS1053_FilePlayer (SPIClass* const spi, int8_t rst, int8_t cs, int8_t dcs, int8_t dreq,
 			      int8_t cardCS);
   Adafruit_VS1053_FilePlayer (int8_t rst, int8_t cs, int8_t dcs, int8_t dreq,
 			      int8_t cardCS);
